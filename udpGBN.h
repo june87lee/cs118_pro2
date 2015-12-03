@@ -21,7 +21,7 @@
 #include <unistd.h>
 #include <time.h>
 
-#define IN_RTT 7777 //Initial RTT, updated dynamically
+#define RTT 7777 //Initial RTT, updated dynamically
 #define CWIN_SIZE 5 //a constant window size
 
 const unsigned int MAX_DATA_SIZE = 256; //Maximum allowed is 1k bytes, so 256 + 16
@@ -29,12 +29,12 @@ const unsigned int MAX_DATA_SIZE = 256; //Maximum allowed is 1k bytes, so 256 + 
 										//1k.
 
 //The signal we are sending
-enum Signal {ACK, PACK}
+enum Signal {ACK, PACK, REQ}
 
 //The header structure
 struct pHeader
 {
-	Signal sig; //ACK or PACK
+	Signal sig; //ACK, PACK, REQ
 	int seqNo; //sequence number, range 0-4
 	int sPortNo; //Source Port number
 	int dPortNo; //Destination Port number
@@ -45,5 +45,6 @@ struct pHeader
 struct pack
 {
 	struct pHeader head; //the header segment
-	char data[MAX_DATA_SIZE]; //actual segment of data
+	char data[MAX_DATA_SIZE]; //actual segment of data, and file requested
+							  //not surpass 256 characters.
 };
