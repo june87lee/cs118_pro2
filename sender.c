@@ -16,7 +16,7 @@ struct pack pWin[CWIN_SIZE];
 
 int main(int argc, char *argv[])
 {
-	 int sockfd, newsockfd, portno, pid, finished;
+	 int sockfd, newsockfd, portno, pid, finished, probLoss;
      socklen_t clilen;
      struct sockaddr_in serv_addr, cli_addr;
      struct sigaction sa;          // for signal SIGCHLD
@@ -28,11 +28,18 @@ int main(int argc, char *argv[])
      //Clearing out the memory for packets
      bzero((char *) &rsp_pack, sizeof(rsp_pack));
      bzero((char *) &rcv_pack, sizeof(rcv_pack));
+     int prob=0;
+     int pl=0;
      //First we check if it has port number
      if(argc<2)
      {
          fprintf(stderr,"ERROR, no port provided\n");
          exit(1);
+     }
+     if(argc>=2)
+     {
+     	pl = (int)(argv[2]*100);
+     	//probLoss = ((rand()%100+1)<=pl);
      }
      //Set up socket file descriptor with UDP protocol.
      /*Personal Notes
@@ -94,8 +101,13 @@ int main(int argc, char *argv[])
      			rsp_pack.head.seqNo = trkSeqNo;
      			fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
      			pWin[i]=rsp_pack;
-     			sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
-     				  (struct sockaddr*) &cli_addr, clilen);
+     			if(pl>0)
+					probLoss = ((rand()%100+1)<=pl);
+				if(probLoss!=0) //simulating loss
+				{     				
+     				sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
+     				 	  (struct sockaddr*) &cli_addr, clilen);
+     			}
      		}
      		time(&setTime);//grabbing initial time
      		while(sentPacks<numPacks)
@@ -151,9 +163,14 @@ int main(int argc, char *argv[])
      							rsp_pack.head.seqNo = trkSeqNo;
      							fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
      							pWin[CWIN_SIZE-1]=rsp_pack;
-     							//try sending packet
-     							sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
-     								  (struct sockaddr*) &cli_addr, clilen);
+     							if(pl>0) //simulating loss
+									probLoss = ((rand()%100+1)<=pl);
+								if(probLoss!=0)
+								{
+     								//try sending packet
+     								sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
+     								 	  (struct sockaddr*) &cli_addr, clilen);
+     							}
      							//reset timer
      							time(&setTime);//grabbing initial time
      						}
@@ -166,7 +183,7 @@ int main(int argc, char *argv[])
      		bzero((char *) &rsp_pack, sizeof(rsp_pack));
      		rsp_pack.head.sig = CLO;
      		sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
-     								  (struct sockaddr*) &cli_addr, clilen);
+     			  (struct sockaddr*) &cli_addr, clilen);
      		fclose(req_file);
      	}
     }
