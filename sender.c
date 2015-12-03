@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
      time_t setTime; //keeps track of time
      //Clearing out the memory for packets
      bzero((char *) &rsp_pack, sizeof(rsp_pack));
-     bzero((char *) &rcv_pack, sizeof(rcv_packk));
+     bzero((char *) &rcv_pack, sizeof(rcv_pack));
      //First we check if it has port number
      if(argc<2)
      {
@@ -81,9 +81,10 @@ int main(int argc, char *argv[])
      		*/
      		int i;
      		//initially, safe to send all 5 packets at once
-     		time(&setTime);//grabbing initial time
+     		//time(&setTime);//grabbing initial time
      		for(i=0;i<CWIN_SIZE;i++)
      		{
+     			bzero((char *) &rsp_pack, sizeof(rsp_pack));
      			//Preping the response packet
      			rsp_pack.head.sig = PACK;
      			rsp_pack.head.sPortNo = portno; //The server's port number
@@ -96,7 +97,8 @@ int main(int argc, char *argv[])
      			sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      				  (struct sockaddr*) &cli_addr, clilen);
      		}
-     		while(sentPacks<=numPacks)
+     		time(&setTime);//grabbing initial time
+     		while(sentPacks<numPacks)
      		{
      			//Now only "slide the window" iff...
      			//  1. ack received
@@ -104,10 +106,67 @@ int main(int argc, char *argv[])
      			if(time(NULL)>setTime+RTT) //if this is true then timeout has occurred
      			{
      				//basically have to resubmit everything in window
+     				int k;
+     				for(k=0;k<CWIN_SIZE;k++)
+     				{
+     					sendto(sockfd, &pWin[k], sizeof(rsp_pack), 0,
+     						  (struct sockaddr*) &cli_addr, clilen);
+     				}
+     				//also reset timer
+     				time(&setTime);//grabbing initial time
      			}
-     			else if
-     			//this part when received proper ack, shift the window and read in new
+     			//if we received something from client, check the ack and slide window
+     			//*making sure the received packet is zeroed out
+     			bzero((char *) &rcv_pack, sizeof(rcv_pack));
+     			else if (recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
+     					(socklen_t*) &clilen) < 0)
+     			{
+     				if(rcv_pack.head.sig == ACK) //only evaluate ACK packets
+     				{
+     					//this will remove first element of window iff
+     					//ACK seq no matches it, if not ignore
+     					if(pWin[0].head.seqNo == rcv_pack.head.seqNo)
+     					{
+     						//we can confirm a packet has been sent now
+     						sentPacks++;
+     						//check to see if it was last packet to be sent
+     						if(sentPacks<numPacks)
+     						{
+     							//now shift the window to the left
+     							int j;
+     							for(j=0;j<(CWIN_SIZE-1);j++)
+     							{
+     								pWin[j]=pWin[j+1];
+     							}
+     							//now adding in new packet to window
+     							bzero((char *) &rsp_pack, sizeof(rsp_pack));
+     							//Preping the response packet
+     							rsp_pack.head.sig = PACK;
+     							rsp_pack.head.sPortNo = portno; //The server's port number
+     							rsp_pack.head.dPortNo = rcv_pack.head.sPortNo; //The client's port number
+     							rsp_pack.head.totalSize = f_size; //Total size of data to transmit
+     							trkSeqNo+=1;
+     							rsp_pack.head.seqNo = trkSeqNo;
+     							fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
+     							pWin[CWIN_SIZE-1]=rsp_pack;
+     							//try sending packet
+     							sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
+     								  (struct sockaddr*) &cli_addr, clilen);
+     							//reset timer
+     							time(&setTime);//grabbing initial time
+     						}
+     					}
+     				}
+     			}
      		}
+     		//if out of second loop, can assume all packets have been sent
+     		//send out packet signaling to close
+     		bzero((char *) &rsp_pack, sizeof(rsp_pack));
+     		rsp_pack.head.sig = CLO;
+     		sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
+     								  (struct sockaddr*) &cli_addr, clilen);
+     		fclose(req_file);
      	}
-     }
+    }
+    return 0;
 }
