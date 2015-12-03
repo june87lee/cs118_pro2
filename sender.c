@@ -125,7 +125,9 @@ int main(int argc, char *argv[])
      				{
      					//this will remove first element of window iff
      					//ACK seq no matches it, if not ignore
-     					if(pWin[0].head.seqNo == rcv_pack.head.seqNo)
+     					//OR if we some how manage to receive a seqNo greater
+     					//than first, we can assume the client has previous
+     					if(pWin[0].head.seqNo =< rcv_pack.head.seqNo)
      					{
      						//we can confirm a packet has been sent now
      						sentPacks++;
@@ -145,7 +147,7 @@ int main(int argc, char *argv[])
      							rsp_pack.head.sPortNo = portno; //The server's port number
      							rsp_pack.head.dPortNo = rcv_pack.head.sPortNo; //The client's port number
      							rsp_pack.head.totalSize = f_size; //Total size of data to transmit
-     							trkSeqNo+=1;
+     							trkSeqNo+=1;//bump up the sequence number
      							rsp_pack.head.seqNo = trkSeqNo;
      							fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
      							pWin[CWIN_SIZE-1]=rsp_pack;
