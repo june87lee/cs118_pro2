@@ -14,7 +14,7 @@
 
 int main(int argc, char *argv[])
 {
-	 int sockfd, newsockfd, portno, pid, finished, probLoss;
+	 int sockfd, newsockfd, portno, pid, finished;
      socklen_t clilen;
      struct sockaddr_in serv_addr, cli_addr;
      struct sigaction sa;          // for signal SIGCHLD
@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
      	//pl = (int)(argv[2]*100);
      	//probLoss = ((rand()%100+1)<=pl);
      }
+     struct pack pWin[cwnd_size];
      if(argc==4)
      {
      	pl = (int)(atof(argv[3])*100);
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
      		fseek(req_file, 0, SEEK_SET);
      		//Figuring out total number of packets.
      		numPacks = ( (f_size%MAX_DATA_SIZE > 0) ? ((f_size/MAX_DATA_SIZE)+1)
-     				   :(f_size/MAX_DATA_SIZE) )
+     				   :(f_size/MAX_DATA_SIZE) );
      		sentPacks=0;
      		trkSeqNo=0;
      		/*
@@ -131,6 +132,8 @@ int main(int argc, char *argv[])
      			//Now only "slide the window" iff...
      			//  1. ack received
      			//  2. timeout has not occured
+     			//*making sure the received packet is zeroed out
+     			bzero((char *) &rcv_pack, sizeof(rcv_pack));
      			if(time(NULL)>setTime+RTT) //if this is true then timeout has occurred
      			{
      				//basically have to resubmit everything in window
@@ -145,8 +148,8 @@ int main(int argc, char *argv[])
      			}
      			//if we received something from client, check the ack and slide window
      			//*making sure the received packet is zeroed out
-     			bzero((char *) &rcv_pack, sizeof(rcv_pack));
-     			else if (recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
+     			//bzero((char *) &rcv_pack, sizeof(rcv_pack));
+     			else if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
      					(socklen_t*) &clilen) < 0)
      			{
      				if(rcv_pack.head.sig == ACK) //only evaluate ACK packets
@@ -155,7 +158,7 @@ int main(int argc, char *argv[])
      					//ACK seq no matches it, if not ignore
      					//OR if we some how manage to receive a seqNo greater
      					//than first, we can assume the client has previous
-     					if(pWin[0].head.seqNo =< rcv_pack.head.seqNo)
+     					if(pWin[0].head.seqNo <= rcv_pack.head.seqNo)
      					{
      						//we can confirm a packet has been sent now
      						sentPacks++;
