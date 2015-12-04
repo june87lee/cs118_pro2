@@ -10,8 +10,6 @@ Primary file for client.
 ./receiver <hostname> <portnumber> <filename>
 */
 #include "udpGBN.h"
-double LOSS_PROB = 0.00;
-double CORRUPT_PROB = 0.0;
 
 int main(int argc, char * * argv) {
     int socketfd;
@@ -47,14 +45,16 @@ int main(int argc, char * * argv) {
     
     //make socket
     socketfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (socketfd < 0)
-        error("ERROR opening socket");
+    if (socketfd < 0){
+        error("Couldn't open socket");
+        exit(1);
+    }
     //find host
     char * hName = argv[1];
     struct hostent * hostName;
     hostName = gethostbyname(hName);
     if (hostName == NULL) {
-        fprintf(stderr, "ERROR, no such host");
+        fprintf(stderr, "Couldn't find host");
         exit(1);
     }
     serverAddr.sin_family = AF_INET;
@@ -71,12 +71,13 @@ int main(int argc, char * * argv) {
     strcpy(rsp_pack.data, fileName); //ask for file
     rsp_pack.head.packSize = strlen(fileName);
     int sAddrLen = sizeof(serverAddr);
+    
     //send request
     sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen);
     bzero((char * ) & rsp_pack, sizeof(rsp_pack));
-    printf("Sent request for file %s\n", rsp_pack.data);
+    printf("Sent request for file %s\n", rsp_pack.data);  
+    FILE * file = fopen(strcat(argv[3], "2"), "w"); //change filename?
     srand(time(NULL));
-    FILE * file = fopen(strcat(argv[3], "2"), "w");
     while (1) {
         loss = rand()/(double) RAND_MAX;
         corr = rand()/(double) RAND_MAX;
@@ -85,8 +86,11 @@ int main(int argc, char * * argv) {
         } else if (corr < CORRUPT_PROB) {
             printf("Sending corrupted packet\n");
             rsp_pack.head.sig = COR;
-            if (sendto(socketfd, &rsp_pack, sizeof(rcv_pack), 0, (struct sockaddr*) &serverAddr, sAddrLen) < 0)
-              error("ERROR responding to corrupt packet");
+            if (sendto(socketfd, &rsp_pack, sizeof(rcv_pack), 0, (struct sockaddr*) &serverAddr, sAddrLen) < 0){
+                error("error sending corrupt packet");
+                exit(1);
+            }
+              
         } else {
             if (rcv_pack.head.sig == COR)
                 printf("Received corrupted packet");
@@ -101,8 +105,10 @@ int main(int argc, char * * argv) {
                 rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
                 rsp_pack.head.totalSize = sizeof(rsp_pack);
                 rsp_pack.head.packSize = 0;
-                if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0)
-                    error("ERROR acking");
+                if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0){
+                    error("Couldn't ACK");
+                    exit(1);
+                }
                 printf("ACK'd packet %d\n", rsp_pack.head.seqNo);
                 mSeqNo++;
             }
@@ -116,8 +122,10 @@ int main(int argc, char * * argv) {
     rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
     rsp_pack.head.totalSize = sizeof(rsp_pack);
     rsp_pack.head.packSize = 0;
-    if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0)
-        error("ERROR acking");
+    if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0){
+        error("Couldn't ACK");
+        exit(1);
+    }
     printf("Sent FIN ACK\n");
     fclose(file);
     close(socketfd);
