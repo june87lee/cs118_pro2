@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
      	{
         	error("ERROR, could not attain packet\n");
      	}
-     	if(rcv_pack.head.sig == REQ)//will ignore all packets, until initial request
+     	if(rcv_pack.head.sig == REQ && cv_pack.head.sig != COR)//will ignore all packets, until initial request
      	{
      		//Trying to open the file requested
      		req_file = fopen(rcv_pack.data, "rb");
@@ -160,8 +160,8 @@ int main(int argc, char *argv[])
      			else if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
      					(socklen_t*) &clilen) > 0)
      			{
-                         fprintf(stdout,"  RECEIVER SOMETHING!");
-     				if(rcv_pack.head.sig == ACK) //only evaluate ACK packets
+                         //fprintf(stdout,"  RECEIVER SOMETHING!");
+     				if(rcv_pack.head.sig == ACK && cv_pack.head.sig != COR) //only evaluate ACK packets
      				{
                               fprintf(stdout,"  Received ACK: %d \n", rcv_pack.head.seqNo);
      					//this will remove first element of window iff
