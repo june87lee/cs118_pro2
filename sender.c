@@ -31,6 +31,9 @@ int main(int argc, char *argv[])
      int pl=0;
      int cwnd_size=CWIN_SIZE;
      int pc=0;
+     int held, a_cnt;
+     a_cnt=0;
+     held=0;
      //First we check if it has port number
      if(argc<2)
      {
@@ -176,13 +179,19 @@ int main(int argc, char *argv[])
      			//*making sure the received packet is zeroed out
      			//bzero((char *) &rcv_pack, sizeof(rcv_pack));
                     //fprintf(stdout, "  **REACHES MID**\n");
-     			if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
+                    if(a_cnt<4)
+                    {
+     			  if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
      					(socklen_t*) &clilen) > 0)
-     			{
+     			  {
                          //fprintf(stdout,"  RECEIVER SOMETHING!");
      				if(rcv_pack.head.sig == ACK && rcv_pack.head.sig != COR) //only evaluate ACK packets
      				{
                               fprintf(stdout,"  Received ACK: %d \n", rcv_pack.head.seqNo);
+                              if(held==rcv_pack.head.seqNo)
+                                   a_cnt++;
+                              else
+                                   a_cnt=0;
      					//this will remove first element of window iff
      					//ACK seq no matches it, if not ignore
      					//OR if we some how manage to receive a seqNo greater
@@ -235,8 +244,10 @@ int main(int argc, char *argv[])
      							time(&setTime);//grabbing initial time
      						}
      					}
+                              held = rcv_pack.head.seqNo;
      				}
-     			}
+     			  }
+                    }
                     //fprintf(stdout, "  **REACHES END OF WHILE**\n");
      		}
                //fprintf(stdout, "  **!!!!OUT OF WHILE!!!**\n");
