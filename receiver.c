@@ -94,14 +94,25 @@ int main(int argc, char * * argv) {
             }
               
         } else {
-            if (rcv_pack.head.sig == COR)
+            if (rcv_pack.head.sig == COR){
                 printf("Received corrupted packet\n");
+                rsp_pack.head.seqNo = rcv_pack.head.seqNo;
+                rsp_pack.head.sig = ACK;
+                rsp_pack.head.sPortNo = atoi(argv[2]);
+                rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
+                rsp_pack.head.totalSize = sizeof(rsp_pack);
+                rsp_pack.head.packSize = 0;
+                if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0){
+                    error("Couldn't ACK");
+                    exit(1);
+                }
+            }
             else if (rcv_pack.head.sig == CLO)
                 break;
             else if (rcv_pack.head.sig == PACK && rcv_pack.head.seqNo == mSeqNo) {
                 printf("Received packet number %d\n", rcv_pack.head.seqNo);
                 fwrite(rcv_pack.data, 1, rcv_pack.head.packSize, file);
-                rsp_pack.head.seqNo = rcv_pack.head.seqNo;
+                rsp_pack.head.seqNo = mSeqNo-1;
                 rsp_pack.head.sig = ACK;
                 rsp_pack.head.sPortNo = atoi(argv[2]);
                 rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
@@ -114,8 +125,19 @@ int main(int argc, char * * argv) {
                 printf("ACK'd packet %d\n", rsp_pack.head.seqNo);
                 mSeqNo++;
             }
-            else
+            else{
                 printf("IGNORE %d: expected %d\n", rcv_pack.head.seqNo, mSeqNo);
+                rsp_pack.head.seqNo = mSeqNo-1;
+                rsp_pack.head.sig = ACK;
+                rsp_pack.head.sPortNo = atoi(argv[2]);
+                rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
+                rsp_pack.head.totalSize = sizeof(rsp_pack);
+                rsp_pack.head.packSize = 0;
+                if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0){
+                    error("Couldn't ACK");
+                    exit(1);
+                }
+            }
         }
     }
     rsp_pack.head.seqNo = rcv_pack.head.seqNo;
