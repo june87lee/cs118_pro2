@@ -69,7 +69,7 @@ sendto(socketfd, &rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr*) &serverAddr,
 bzero((char *) &rsp_pack, sizeof(rsp_pack));
 printf("Requested file %s\n", rsp_pack.data);
 srand(time(NULL));
-FILE* file = fopen(argv[3], "w");
+FILE* file = fopen(strcat(argv[3], "2"), "w");
 
 while (1) {
 if (recvfrom(socketfd, &rcv_pack, sizeof(rcv_pack), 0, (struct sockaddr*) &serverAddr, (socklen_t*) &sAddrLen) < 0 || random_num() < LOSS_PROB) {
