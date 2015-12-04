@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
      clilen = sizeof(cli_addr);
      while(1)//server on indefinitely till closing of sender
      {
-     	if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
+     	if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
      		(socklen_t*) &clilen) < 0)
      	{
         	error("ERROR, could not attain packet\n");
