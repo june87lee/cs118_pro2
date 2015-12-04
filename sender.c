@@ -176,8 +176,8 @@ int main(int argc, char *argv[])
      			//*making sure the received packet is zeroed out
      			//bzero((char *) &rcv_pack, sizeof(rcv_pack));
                     fprintf(stdout, "  **REACHES MID**\n");
-     			if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),MSG_NOBLOCK,(struct sockaddr*) &serv_addr,
-     					(socklen_t*) &clilen) > 0)
+     			if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
+     					(socklen_t*) &clilen) != 0)
      			{
                          //fprintf(stdout,"  RECEIVER SOMETHING!");
      				if(rcv_pack.head.sig == ACK && rcv_pack.head.sig != COR) //only evaluate ACK packets
