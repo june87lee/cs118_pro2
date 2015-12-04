@@ -14,12 +14,14 @@ This header file contains all basic stuff that all files would share.
 #include <netinet/in.h> // constants and structures needed for internet domain addresses, e.g. sockaddr_in
 #include <stdlib.h>
 #include <strings.h>
+#include <string.h>
 #include <sys/wait.h> /* for the waitpid() system call */
 #include <signal.h> /* signal name macros, and the kill() prototype */
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <time.h>
+#include <netdb.h>
 #define RTT 7777 //Initial RTT, updated dynamically
 #define CWIN_SIZE 5 //a constant window size
 #define MAX_DATA_SIZE 256 //Maximum allowed is 1k bytes, so 256 + 16
