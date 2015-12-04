@@ -95,7 +95,7 @@ int main(int argc, char * * argv) {
               
         } else {
             if (rcv_pack.head.sig == COR)
-                printf("Received corrupted packet");
+                printf("Received corrupted packet\n");
             else if (rcv_pack.head.sig == CLO)
                 break;
             else if (rcv_pack.head.sig == PACK && rcv_pack.head.seqNo == mSeqNo) {
