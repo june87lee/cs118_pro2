@@ -112,7 +112,7 @@ int main(int argc, char * * argv) {
             else if (rcv_pack.head.sig == PACK && rcv_pack.head.seqNo == mSeqNo) {
                 printf("Received packet number %d\n", rcv_pack.head.seqNo);
                 fwrite(rcv_pack.data, 1, rcv_pack.head.packSize, file);
-                rsp_pack.head.seqNo = mSeqNo-1;
+                rsp_pack.head.seqNo = rcv_pack.head.seqNo;
                 rsp_pack.head.sig = ACK;
                 rsp_pack.head.sPortNo = atoi(argv[2]);
                 rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
