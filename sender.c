@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
      	{
         	      error("ERROR, could not attain packet\n");
      	}
-     	if(rcv_pack.head.sig == REQ && cv_pack.head.sig != COR)//will ignore all packets, until initial request
+     	if(rcv_pack.head.sig == REQ && rcv_pack.head.sig != COR)//will ignore all packets, until initial request
      	{
      		//Trying to open the file requested
      		req_file = fopen(rcv_pack.data, "rb");
