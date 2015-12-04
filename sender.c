@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 								if(probCor!=0)
 									rsp_pack.head.sig = COR;
 								fprintf(stdout,"  Sending packet: %d \n", trkSeqNo);
-								if(probLoss!=0)
+								if(probLoss==0)
 								{
      								//try sending packet
      								sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
