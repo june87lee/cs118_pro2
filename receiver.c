@@ -139,6 +139,16 @@ int main(int argc, char * * argv) {
                 }
             }
         }
+    rsp_pack.head.seqNo = mSeqNo-1;
+    rsp_pack.head.sig = ACK;
+    rsp_pack.head.sPortNo = atoi(argv[2]);
+    rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
+    rsp_pack.head.totalSize = sizeof(rsp_pack);
+    rsp_pack.head.packSize = 0;
+    if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0){
+        error("Couldn't ACK");
+        exit(1);
+    }
     }
     rsp_pack.head.seqNo = rcv_pack.head.seqNo;
     rsp_pack.head.sig = CLO;
