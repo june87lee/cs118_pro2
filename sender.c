@@ -39,17 +39,17 @@ int main(int argc, char *argv[])
      }
      if(argc==3)
      {
-     	cwnd_size=argv[2];
+     	cwnd_size=atoi(argv[2]);
      	//pl = (int)(argv[2]*100);
      	//probLoss = ((rand()%100+1)<=pl);
      }
      if(argc==4)
      {
-     	pl = (int)(argv[3]*100);
+     	pl = (int)(atof(argv[3])*100);
      }
      if(argc==5)
      {
-     	pc = (int)(argv[4]*100);
+     	pc = (int)(atof(argv[4])*100);
      }
      //Set up socket file descriptor with UDP protocol.
      /*Personal Notes
