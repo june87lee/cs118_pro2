@@ -132,6 +132,7 @@ int main(int argc, char *argv[])
      		time(&setTime);//grabbing initial time
      		while(sentPacks<numPacks)
      		{
+                    fprintf(stdout,"  IN SECOND LOOP \n");
      			//Now only "slide the window" iff...
      			//  1. ack received
      			//  2. timeout has not occured
