@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
      			rsp_pack.head.sPortNo = portno; //The server's port number
      			rsp_pack.head.dPortNo = rcv_pack.head.sPortNo; //The client's port number
      			rsp_pack.head.totalSize = f_size; //Total size of data to transmit
-     			trkSeqNo+=i;
+     			trkSeqNo++;
      			rsp_pack.head.seqNo = trkSeqNo;
      			fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
      			pWin[i]=rsp_pack;
@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
 					probCor = ((rand()%100+1)<=pc);
 				if(probCor!=0)
 					rsp_pack.head.sig = COR;
+				fprintf(stdout,"  Sending packet: %d \n", trkSeqNo);
 				if(probLoss==0) //simulating loss
 				{     				
      				sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
@@ -140,6 +141,7 @@ int main(int argc, char *argv[])
      				int k;
      				for(k=0;k<cwnd_size;k++)
      				{
+     					fprintf(stdout,"  Resending packet: %d \n", pWin[k].head.seqNo);
      					sendto(sockfd, &pWin[k], sizeof(rsp_pack), 0,
      						  (struct sockaddr*) &cli_addr, clilen);
      				}
@@ -188,6 +190,7 @@ int main(int argc, char *argv[])
 									probCor = ((rand()%100+1)<=pc);
 								if(probCor!=0)
 									rsp_pack.head.sig = COR;
+								fprintf(stdout,"  Sending packet: %d \n", trkSeqNo);
 								if(probLoss!=0)
 								{
      								//try sending packet
