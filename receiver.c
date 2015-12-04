@@ -138,7 +138,7 @@ int main(int argc, char * * argv) {
                     exit(1);
                 }
             }
-        }
+        }/*
     rsp_pack.head.seqNo = mSeqNo-1;
     rsp_pack.head.sig = ACK;
     rsp_pack.head.sPortNo = atoi(argv[2]);
@@ -148,7 +148,7 @@ int main(int argc, char * * argv) {
     if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0){
         error("Couldn't ACK");
         exit(1);
-    }
+    }*/
     }
     rsp_pack.head.seqNo = mSeqNo-1;
     rsp_pack.head.sig = CLO;
