@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
      			//*making sure the received packet is zeroed out
      			//bzero((char *) &rcv_pack, sizeof(rcv_pack));
                     //fprintf(stdout, "  **REACHES MID**\n");
-                    if(a_cnt<4)
+                    if(a_cnt<3)
                     {
      			  if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
      					(socklen_t*) &clilen) > 0)
