@@ -156,6 +156,7 @@ int main(int argc, char *argv[])
      			{
      				if(rcv_pack.head.sig == ACK) //only evaluate ACK packets
      				{
+                              fprintf(stdout,"  Received ACK: %d \n", rcv_pack.head.seqNo);
      					//this will remove first element of window iff
      					//ACK seq no matches it, if not ignore
      					//OR if we some how manage to receive a seqNo greater
