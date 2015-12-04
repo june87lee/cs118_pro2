@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
      			//  2. timeout has not occured
      			//*making sure the received packet is zeroed out
      			bzero((char *) &rcv_pack, sizeof(rcv_pack));
-                    fprintf(stdout,"  IS %d > %d ?\n",time(NULL),setTime+RTT);
+                    //fprintf(stdout,"  IS %d > %d ?\n",time(NULL),setTime+RTT);
      			if(time(NULL)>setTime+RTT) //if this is true then timeout has occurred
      			{
      				//basically have to resubmit everything in window
@@ -173,6 +173,7 @@ int main(int argc, char *argv[])
                               probCor = 0;
                               time(&setTime); 
      				}
+                         a_cnt=0;
      				//also reset timer
 
      				//time(&setTime);//grabbing initial time
@@ -198,7 +199,7 @@ int main(int argc, char *argv[])
      					//ACK seq no matches it, if not ignore
      					//OR if we some how manage to receive a seqNo greater
      					//than first, we can assume the client has previous
-     					if(pWin[0].head.seqNo == rcv_pack.head.seqNo)
+     					if(pWin[0].head.seqNo <= rcv_pack.head.seqNo)
      					{
      						//we can confirm a packet has been sent now
      						sentPacks++;
