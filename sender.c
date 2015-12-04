@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
      					//ACK seq no matches it, if not ignore
      					//OR if we some how manage to receive a seqNo greater
      					//than first, we can assume the client has previous
-     					if(pWin[0].head.seqNo <= rcv_pack.head.seqNo)
+     					if(pWin[0].head.seqNo == rcv_pack.head.seqNo)
      					{
      						//we can confirm a packet has been sent now
      						sentPacks++;
