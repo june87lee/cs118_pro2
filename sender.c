@@ -162,10 +162,11 @@ int main(int argc, char *argv[])
                               {   
      					sendto(sockfd, &pWin[k], sizeof(rsp_pack), 0,
      						  (struct sockaddr*) &cli_addr, clilen);
-                              time(&setTime);
+                              //time(&setTime);
                               }
                               else
-                                   fprintf(stdout,"  Packet Loss\n"); 
+                                   fprintf(stdout,"  Packet Loss\n");
+                              time(&setTime); 
      				}
      				//also reset timer
 
@@ -223,7 +224,7 @@ int main(int argc, char *argv[])
                                              fprintf(stdout,"  Sending packet: %d \n", trkSeqNo-1);
      								sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      								 	  (struct sockaddr*) &cli_addr, clilen);
-                                             time(&setTime);
+                                             //time(&setTime);
      							}
                                         else
                                             fprintf(stdout,"  Packet Loss\n"); 
