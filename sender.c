@@ -37,14 +37,14 @@ int main(int argc, char *argv[])
          fprintf(stderr,"ERROR, no port provided\n");
          exit(1);
      }
-     if(argc==3)
+     if(argc>2)
      {
      	cwnd_size=atoi(argv[2]);
      	//pl = (int)(argv[2]*100);
      	//probLoss = ((rand()%100+1)<=pl);
      }
      struct pack pWin[cwnd_size];
-     if(argc==4)
+     if(argc>3)
      {
      	pl = (int)(atof(argv[3])*100);
      }
@@ -133,9 +133,9 @@ int main(int argc, char *argv[])
      			probLoss = 0;
      			probCor = 0;
      		}
-               fprintf(stdout,"  BEFORE TIME \n");
+               //fprintf(stdout,"  BEFORE TIME \n");
      		//time(&setTime);//grabbing initial time
-               fprintf(stdout,"  AFTER TIME \n");
+               //fprintf(stdout,"  AFTER TIME \n");
      		while(sentPacks<numPacks)
      		{
                     //fprintf(stdout,"  IN SECOND LOOP \n");
