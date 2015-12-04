@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
      	if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
      		(socklen_t*) &clilen) < 0)
      	{
-        	error("ERROR, could not attain packet\n");
+        	      error("ERROR, could not attain packet\n");
      	}
      	if(rcv_pack.head.sig == REQ && cv_pack.head.sig != COR)//will ignore all packets, until initial request
      	{
@@ -120,12 +120,15 @@ int main(int argc, char *argv[])
 					probCor = ((rand()%100+1)<=pc);
 				if(probCor!=0)
 					rsp_pack.head.sig = COR;
-				fprintf(stdout,"  Sending packet: %d \n", trkSeqNo-1);
+				//fprintf(stdout,"  Sending packet: %d \n", trkSeqNo-1);
 				if(probLoss==0) //simulating loss
-				{     				
+				{    
+                         fprintf(stdout,"  Sending packet: %d \n", trkSeqNo-1); 				
      				sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      				 	  (struct sockaddr*) &cli_addr, clilen);
      			}
+                    else
+                         fprintf(stdout,"  Packet Loss\n"); 
      			probLoss = 0;
      			probCor = 0;
      		}
@@ -147,8 +150,19 @@ int main(int argc, char *argv[])
      				for(k=0;k<cwnd_size;k++)
      				{
      					fprintf(stdout,"  Resending packet: %d \n", pWin[k].head.seqNo);
+                              if(pl>0)
+                                   probLoss = ((rand()%100+1)<=pl);
+                              if(pc>0)
+                                   probCor = ((rand()%100+1)<=pc);
+                              if(probCor!=0)
+                                   pWin[k].head.sig = COR;
+                              if(probLoss==0) //simulating loss
+                              {   
      					sendto(sockfd, &pWin[k], sizeof(rsp_pack), 0,
      						  (struct sockaddr*) &cli_addr, clilen);
+                              }
+                              else
+                                   fprintf(stdout,"  Packet Loss\n"); 
      				}
      				//also reset timer
 
@@ -199,13 +213,16 @@ int main(int argc, char *argv[])
 									probCor = ((rand()%100+1)<=pc);
 								if(probCor!=0)
 									rsp_pack.head.sig = COR;
-								fprintf(stdout,"  Sending packet: %d \n", trkSeqNo);
+								//fprintf(stdout,"  Sending packet: %d \n", trkSeqNo);
 								if(probLoss==0)
 								{
      								//try sending packet
+                                             fprintf(stdout,"  Sending packet: %d \n", trkSeqNo-1);
      								sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      								 	  (struct sockaddr*) &cli_addr, clilen);
      							}
+                                        else
+                                            fprintf(stdout,"  Packet Loss\n"); 
      							probLoss = 0;
      							probCor = 0;
      							//reset timer
