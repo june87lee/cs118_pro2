@@ -39,6 +39,7 @@ int seqNo; //sequence number, range 0-4
 int sPortNo; //Source Port number
 int dPortNo; //Destination Port number
 int totalSize; //Total Size of data
+int packSize; //sizeof packet
 };
 
 //The data structure of packet

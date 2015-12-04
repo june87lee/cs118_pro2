@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
      			//trkSeqNo++;
      			rsp_pack.head.seqNo = trkSeqNo;
                     trkSeqNo++;
-     			fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
+     			rsp_pack.head.packSize = fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
      			pWin[i]=rsp_pack;
      			if(pl>0)
 					probLoss = ((rand()%100+1)<=pl);
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
      							//trkSeqNo+=1;//bump up the sequence number
      							rsp_pack.head.seqNo = trkSeqNo;
                                         trkSeqNo+=1;
-     							fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
+     							rsp_pack.head.packSize = fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
      							pWin[cwnd_size-1]=rsp_pack;
      							if(pl>0) //simulating loss
 									probLoss = ((rand()%100+1)<=pl);
