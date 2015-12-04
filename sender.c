@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
      serv_addr.sin_addr.s_addr = INADDR_ANY;
      serv_addr.sin_port = htons(portno);
      //binds serv_addr to a particular socket request when executing
-     if (bind(sockfd, (struct sockaddr *) &cli_addr,
-              sizeof(cli_addr)) < 0) 
+     if (bind(sockfd, (struct sockaddr *) &serv_addr,
+              sizeof(serv_addr)) < 0) 
               error("ERROR, on binding");
      clilen = sizeof(cli_addr);
      while(1)//server on indefinitely till closing of sender
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
      			//if we received something from client, check the ack and slide window
      			//*making sure the received packet is zeroed out
      			//bzero((char *) &rcv_pack, sizeof(rcv_pack));
-     			else if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
+     			else if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
      					(socklen_t*) &clilen) > 0)
      			{
                          fprintf(stdout,"  RECEIVER SOMETHING!");
