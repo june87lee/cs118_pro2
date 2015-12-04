@@ -29,7 +29,7 @@ const unsigned int MAX_DATA_SIZE = 256; //Maximum allowed is 1k bytes, so 256 + 
 										//1k.
 
 //The signal we are sending
-enum Signal {ACK, PACK, REQ, CLO}
+enum Signal {ACK, PACK, REQ, CLO, COR}
 
 //The header structure
 struct pHeader

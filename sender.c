@@ -12,8 +12,6 @@
 
 #include "udpGBN.h"
 
-struct pack pWin[CWIN_SIZE];
-
 int main(int argc, char *argv[])
 {
 	 int sockfd, newsockfd, portno, pid, finished, probLoss;
@@ -28,18 +26,30 @@ int main(int argc, char *argv[])
      //Clearing out the memory for packets
      bzero((char *) &rsp_pack, sizeof(rsp_pack));
      bzero((char *) &rcv_pack, sizeof(rcv_pack));
-     int prob=0;
+     int probLoss=0;
+     int probCor=0;
      int pl=0;
+     int cwnd_size=CWIN_SIZE;
+     int pc=0;
      //First we check if it has port number
      if(argc<2)
      {
          fprintf(stderr,"ERROR, no port provided\n");
          exit(1);
      }
-     if(argc>=2)
+     if(argc==3)
      {
-     	pl = (int)(argv[2]*100);
+     	cwnd_size=argv[2];
+     	//pl = (int)(argv[2]*100);
      	//probLoss = ((rand()%100+1)<=pl);
+     }
+     if(argc==4)
+     {
+     	pl = (int)(argv[3]*100);
+     }
+     if(argc==5)
+     {
+     	pc = (int)(argv[4]*100);
      }
      //Set up socket file descriptor with UDP protocol.
      /*Personal Notes
@@ -89,7 +99,7 @@ int main(int argc, char *argv[])
      		int i;
      		//initially, safe to send all 5 packets at once
      		//time(&setTime);//grabbing initial time
-     		for(i=0;i<CWIN_SIZE;i++)
+     		for(i=0;i<cwnd_size;i++)
      		{
      			bzero((char *) &rsp_pack, sizeof(rsp_pack));
      			//Preping the response packet
@@ -103,7 +113,11 @@ int main(int argc, char *argv[])
      			pWin[i]=rsp_pack;
      			if(pl>0)
 					probLoss = ((rand()%100+1)<=pl);
-				if(probLoss!=0) //simulating loss
+				if(pc>0)
+					probCor = ((rand()%100+1)<=pc);
+				if(probCor!=0)
+					rsp_pack.head.sig = COR;
+				if(probLoss==0) //simulating loss
 				{     				
      				sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      				 	  (struct sockaddr*) &cli_addr, clilen);
@@ -119,7 +133,7 @@ int main(int argc, char *argv[])
      			{
      				//basically have to resubmit everything in window
      				int k;
-     				for(k=0;k<CWIN_SIZE;k++)
+     				for(k=0;k<cwnd_size;k++)
      				{
      					sendto(sockfd, &pWin[k], sizeof(rsp_pack), 0,
      						  (struct sockaddr*) &cli_addr, clilen);
@@ -148,7 +162,7 @@ int main(int argc, char *argv[])
      						{
      							//now shift the window to the left
      							int j;
-     							for(j=0;j<(CWIN_SIZE-1);j++)
+     							for(j=0;j<(cwnd_size-1);j++)
      							{
      								pWin[j]=pWin[j+1];
      							}
@@ -162,9 +176,13 @@ int main(int argc, char *argv[])
      							trkSeqNo+=1;//bump up the sequence number
      							rsp_pack.head.seqNo = trkSeqNo;
      							fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
-     							pWin[CWIN_SIZE-1]=rsp_pack;
+     							pWin[cwnd_size-1]=rsp_pack;
      							if(pl>0) //simulating loss
 									probLoss = ((rand()%100+1)<=pl);
+								if(pc>0)
+									probCor = ((rand()%100+1)<=pc);
+								if(probCor!=0)
+									rsp_pack.head.sig = COR;
 								if(probLoss!=0)
 								{
      								//try sending packet
