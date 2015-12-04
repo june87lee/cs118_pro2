@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
      		//Figuring out total number of packets.
      		numPacks = ( (f_size%MAX_DATA_SIZE > 0) ? ((f_size/MAX_DATA_SIZE)+1)
      				   :(f_size/MAX_DATA_SIZE) );
+               fprintf(stdout,"  -THE NUMBER OF PACKETS TO SEND: %d \n", numPacks);
      		sentPacks=0;
      		trkSeqNo=0;
      		/*
@@ -119,7 +120,7 @@ int main(int argc, char *argv[])
 					probCor = ((rand()%100+1)<=pc);
 				if(probCor!=0)
 					rsp_pack.head.sig = COR;
-				fprintf(stdout,"  Sending packet: %d \n", trkSeqNo);
+				fprintf(stdout,"  Sending packet: %d \n", trkSeqNo-1);
 				if(probLoss==0) //simulating loss
 				{     				
      				sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
