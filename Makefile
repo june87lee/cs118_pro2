@@ -11,4 +11,4 @@ receiver: receiver.c
 .PHONY: clean
 
 clean:
-	rm *.o receiver sender
+	rm receiver sender

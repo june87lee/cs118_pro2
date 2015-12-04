@@ -86,7 +86,7 @@ int main(int argc, char * * argv) {
                 break;
             if (rcv_pack.head.sig == PACK && rcv_pack.head.seqNo == mSeqNo) {
                 printf("Good packet\n");
-                fwrite(rcv_pack.data, 1, sizeof(rcv_pack), file);
+                fwrite(rcv_pack.data, 1, MAX_DATA_SIZE, file);
                 printf("wrote \n");
                 rsp_pack.head.seqNo = rcv_pack.head.seqNo;
                 rsp_pack.head.sig = ACK;

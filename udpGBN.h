@@ -22,7 +22,7 @@ This header file contains all basic stuff that all files would share.
 #include <unistd.h>
 #include <time.h>
 #include <netdb.h>
-#define RTT 7777 //Initial RTT, updated dynamically
+#define RTT 2 //Initial RTT, updated dynamically
 #define CWIN_SIZE 5 //a constant window size
 #define MAX_DATA_SIZE 256 //Maximum allowed is 1k bytes, so 256 + 16
 //(due to size of four ints) is still within
