@@ -236,7 +236,9 @@ int main(int argc, char *argv[])
      					}
      				}
      			}
+                    fprintf(stdout, "  **REACHES END OF WHILE**\n");
      		}
+               fprintf(stdout, "  **!!!!OUT OF WHILE!!!**\n");
      		//if out of second loop, can assume all packets have been sent
      		//send out packet signaling to close
      		bzero((char *) &rsp_pack, sizeof(rsp_pack));
