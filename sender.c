@@ -61,15 +61,15 @@ int main(int argc, char *argv[])
      if (sockfd < 0) 
         error("ERROR, opening socket\n");
      //Zeroing out memory segment for serv_addr
-     bzero((char *) &serv_addr, sizeof(serv_addr));
+     bzero((char *) &cli_addr, sizeof(cli_addr));
      //This is the source port number of server sender.
      portno = atoi(argv[1]);
      cli_addr.sin_family = AF_INET;
      cli_addr.sin_addr.s_addr = INADDR_ANY;
      cli_addr.sin_port = htons(portno);
      //binds serv_addr to a particular socket request when executing
-     if (bind(sockfd, (struct sockaddr *) &serv_addr,
-              sizeof(serv_addr)) < 0) 
+     if (bind(sockfd, (struct sockaddr *) &cli_addr,
+              sizeof(cli_addr)) < 0) 
               error("ERROR, on binding");
      clilen = sizeof(cli_addr);
      while(1)//server on indefinitely till closing of sender
