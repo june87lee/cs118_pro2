@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
                          fprintf(stdout,"  Sending packet: %d \n", trkSeqNo-1); 				
      				sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      				 	  (struct sockaddr*) &cli_addr, clilen);
+                         time(&setTime);//grabbing initial time
      			}
                     else
                          fprintf(stdout,"  Packet Loss\n"); 
@@ -133,16 +134,17 @@ int main(int argc, char *argv[])
      			probCor = 0;
      		}
                fprintf(stdout,"  BEFORE TIME \n");
-     		time(&setTime);//grabbing initial time
+     		//time(&setTime);//grabbing initial time
                fprintf(stdout,"  AFTER TIME \n");
      		while(sentPacks<numPacks)
      		{
-                    fprintf(stdout,"  IN SECOND LOOP \n");
+                    //fprintf(stdout,"  IN SECOND LOOP \n");
      			//Now only "slide the window" iff...
      			//  1. ack received
      			//  2. timeout has not occured
      			//*making sure the received packet is zeroed out
      			bzero((char *) &rcv_pack, sizeof(rcv_pack));
+                    fprintf(stdout,"  IS %d > %d ?\n",time(NULL),setTime+RTT);
      			if(time(NULL)>setTime+RTT) //if this is true then timeout has occurred
      			{
      				//basically have to resubmit everything in window
@@ -160,13 +162,14 @@ int main(int argc, char *argv[])
                               {   
      					sendto(sockfd, &pWin[k], sizeof(rsp_pack), 0,
      						  (struct sockaddr*) &cli_addr, clilen);
+                              time(&setTime);
                               }
                               else
                                    fprintf(stdout,"  Packet Loss\n"); 
      				}
      				//also reset timer
 
-     				time(&setTime);//grabbing initial time
+     				//time(&setTime);//grabbing initial time
      			}
      			//if we received something from client, check the ack and slide window
      			//*making sure the received packet is zeroed out
@@ -220,6 +223,7 @@ int main(int argc, char *argv[])
                                              fprintf(stdout,"  Sending packet: %d \n", trkSeqNo-1);
      								sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      								 	  (struct sockaddr*) &cli_addr, clilen);
+                                             time(&setTime);
      							}
                                         else
                                             fprintf(stdout,"  Packet Loss\n"); 
