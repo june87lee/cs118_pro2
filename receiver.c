@@ -79,7 +79,7 @@ int main(int argc, char * * argv) {
     FILE * file = fopen(strcat(argv[3], "2"), "w"); //change filename?
     double loss;
     double corr;
-    int count=0;
+    int counter=0;
     srand(time(NULL));
     while (1) {
         loss = rand()/(double) RAND_MAX;
