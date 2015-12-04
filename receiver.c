@@ -96,7 +96,7 @@ int main(int argc, char * * argv) {
         } else {
             if (rcv_pack.head.sig == COR){
                 printf("Received corrupted packet\n");
-                rsp_pack.head.seqNo = rcv_pack.head.seqNo;
+                rsp_pack.head.seqNo = mSeqNo-1;
                 rsp_pack.head.sig = ACK;
                 rsp_pack.head.sPortNo = atoi(argv[2]);
                 rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
