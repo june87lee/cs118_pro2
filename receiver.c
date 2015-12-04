@@ -79,6 +79,7 @@ int main(int argc, char * * argv) {
     FILE * file = fopen(strcat(argv[3], "2"), "w"); //change filename?
     double loss;
     double corr;
+    int count=0;
     srand(time(NULL));
     while (1) {
         loss = rand()/(double) RAND_MAX;
@@ -124,6 +125,7 @@ int main(int argc, char * * argv) {
                 }
                 printf("ACK'd packet %d\n", rsp_pack.head.seqNo);
                 mSeqNo++;
+                counter = 0;
             }
             else{
                 printf("IGNORE %d: expected %d\n", rcv_pack.head.seqNo, mSeqNo);
@@ -138,17 +140,20 @@ int main(int argc, char * * argv) {
                     exit(1);
                 }
             }
-        }/*
-    rsp_pack.head.seqNo = mSeqNo-1;
-    rsp_pack.head.sig = ACK;
-    rsp_pack.head.sPortNo = atoi(argv[2]);
-    rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
-    rsp_pack.head.totalSize = sizeof(rsp_pack);
-    rsp_pack.head.packSize = 0;
-    if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0){
-        error("Couldn't ACK");
-        exit(1);
-    }*/
+        }
+    counter++;
+    if(counter == 4){
+        rsp_pack.head.seqNo = mSeqNo-1;
+        rsp_pack.head.sig = ACK;
+        rsp_pack.head.sPortNo = atoi(argv[2]);
+        rsp_pack.head.dPortNo = rcv_pack.head.sPortNo;
+        rsp_pack.head.totalSize = sizeof(rsp_pack);
+        rsp_pack.head.packSize = 0;
+        if (sendto(socketfd, & rsp_pack, sizeof(rsp_pack), 0, (struct sockaddr * ) & serverAddr, sAddrLen) < 0){
+            error("Couldn't ACK");
+            exit(1);
+        }
+    }
     }
     rsp_pack.head.seqNo = mSeqNo-1;
     rsp_pack.head.sig = CLO;
