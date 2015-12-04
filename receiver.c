@@ -18,8 +18,8 @@ int main(int argc, char * * argv) {
     struct pack rsp_pack;
     FILE * req_file; //file to ask for
     struct sockaddr_in serverAddr;
-    double loss;
-    double corr;
+    double ProbLoss;
+    double CorrLoss;
     
     //zero out structs
     bzero((char * ) & rsp_pack, sizeof(rsp_pack));
@@ -31,16 +31,16 @@ int main(int argc, char * * argv) {
         exit(1);
     }
     if(argc == 4){
-        loss = 0;
-        corr = 0;
+        ProbLoss = 0;
+        CorrLoss = 0;
     }
     else if(argc == 5){
-        loss = argv[4];
-        corr = 0;
+        ProbLoss = atof(argv[4]);
+        CorrLoss = 0;
     }
     else if(argc == 6){
-        loss = argv[4];
-        corr = argv[5];
+        ProbLoss = atof(argv[4]);
+        CorrLoss = atof(argv[5]);
     }
     
     //make socket
@@ -77,13 +77,15 @@ int main(int argc, char * * argv) {
     bzero((char * ) & rsp_pack, sizeof(rsp_pack));
     printf("Sent request for file %s\n", rsp_pack.data);  
     FILE * file = fopen(strcat(argv[3], "2"), "w"); //change filename?
+    double loss;
+    double corr;
     srand(time(NULL));
     while (1) {
         loss = rand()/(double) RAND_MAX;
         corr = rand()/(double) RAND_MAX;
-        if (recvfrom(socketfd, & rcv_pack, sizeof(rcv_pack), 0, (struct sockaddr * ) & serverAddr, (socklen_t * ) & sAddrLen) < 0 || loss < LOSS_PROB) {
+        if (recvfrom(socketfd, & rcv_pack, sizeof(rcv_pack), 0, (struct sockaddr * ) & serverAddr, (socklen_t * ) & sAddrLen) < 0 || loss < ProbLoss) {
             printf("Lost packet\n");
-        } else if (corr < CORRUPT_PROB) {
+        } else if (corr < CorrLoss) {
             printf("Sending corrupted packet\n");
             rsp_pack.head.sig = COR;
             if (sendto(socketfd, &rsp_pack, sizeof(rcv_pack), 0, (struct sockaddr*) &serverAddr, sAddrLen) < 0){
