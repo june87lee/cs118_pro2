@@ -122,6 +122,8 @@ int main(int argc, char *argv[])
      				sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      				 	  (struct sockaddr*) &cli_addr, clilen);
      			}
+     			probLoss = 0;
+     			probCor = 0;
      		}
      		time(&setTime);//grabbing initial time
      		while(sentPacks<numPacks)
@@ -189,6 +191,8 @@ int main(int argc, char *argv[])
      								sendto(sockfd, &rsp_pack, sizeof(rsp_pack), 0,
      								 	  (struct sockaddr*) &cli_addr, clilen);
      							}
+     							probLoss = 0;
+     							probCor = 0;
      							//reset timer
      							time(&setTime);//grabbing initial time
      						}
