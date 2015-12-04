@@ -129,7 +129,9 @@ int main(int argc, char *argv[])
      			probLoss = 0;
      			probCor = 0;
      		}
+               fprintf(stdout,"  BEFORE TIME \n");
      		time(&setTime);//grabbing initial time
+               fprintf(stdout,"  AFTER TIME \n");
      		while(sentPacks<numPacks)
      		{
                     fprintf(stdout,"  IN SECOND LOOP \n");
@@ -149,6 +151,7 @@ int main(int argc, char *argv[])
      						  (struct sockaddr*) &cli_addr, clilen);
      				}
      				//also reset timer
+
      				time(&setTime);//grabbing initial time
      			}
      			//if we received something from client, check the ack and slide window
