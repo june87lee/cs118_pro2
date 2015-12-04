@@ -10,7 +10,6 @@ Primary file for client.
 ./receiver <hostname> <portnumber> <filename>
 */
 #include "udpGBN.h"
-int BUF_SIZE = 1024;
 double LOSS_PROB = 0.00;
 double CORRUPT_PROB = 0.0;
 
@@ -56,7 +55,7 @@ int main(int argc, char * * argv) {
         exit(1);
     }
     serverAddr.sin_family = AF_INET;
-    bcopy((char * ) hostName - > h_addr, (char * ) & serverAddr.sin_addr.s_addr, hostName - > h_length);
+    bcopy((char * ) hostName->h_addr, (char * ) & serverAddr.sin_addr.s_addr, hostName-> h_length);
     serverAddr.sin_port = htons(atoi(argv[2]));
 
     //Set up response packet
@@ -103,6 +102,6 @@ int main(int argc, char * * argv) {
         }
     }
     fclose(file);
-    close(sockfd);
+    close(socketfd);
     return 0;
 }
