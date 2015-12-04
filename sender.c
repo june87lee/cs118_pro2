@@ -61,12 +61,12 @@ int main(int argc, char *argv[])
      if (sockfd < 0) 
         error("ERROR, opening socket\n");
      //Zeroing out memory segment for serv_addr
-     bzero((char *) &cli_addr, sizeof(cli_addr));
+     bzero((char *) &serv_addr, sizeof(serv_addr));
      //This is the source port number of server sender.
      portno = atoi(argv[1]);
-     cli_addr.sin_family = AF_INET;
-     cli_addr.sin_addr.s_addr = INADDR_ANY;
-     cli_addr.sin_port = htons(portno);
+     serv_addr.sin_family = AF_INET;
+     serv_addr.sin_addr.s_addr = INADDR_ANY;
+     serv_addr.sin_port = htons(portno);
      //binds serv_addr to a particular socket request when executing
      if (bind(sockfd, (struct sockaddr *) &cli_addr,
               sizeof(cli_addr)) < 0) 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
      clilen = sizeof(cli_addr);
      while(1)//server on indefinitely till closing of sender
      {
-     	if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
+     	if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
      		(socklen_t*) &clilen) < 0)
      	{
         	error("ERROR, could not attain packet\n");
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
      			//*making sure the received packet is zeroed out
      			//bzero((char *) &rcv_pack, sizeof(rcv_pack));
      			else if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
-     					(socklen_t*) &clilen) < 0)
+     					(socklen_t*) &clilen) > 0)
      			{
                          fprintf(stdout,"  RECEIVER SOMETHING!");
      				if(rcv_pack.head.sig == ACK) //only evaluate ACK packets
