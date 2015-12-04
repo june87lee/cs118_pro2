@@ -108,8 +108,9 @@ int main(int argc, char *argv[])
      			rsp_pack.head.sPortNo = portno; //The server's port number
      			rsp_pack.head.dPortNo = rcv_pack.head.sPortNo; //The client's port number
      			rsp_pack.head.totalSize = f_size; //Total size of data to transmit
-     			trkSeqNo++;
+     			//trkSeqNo++;
      			rsp_pack.head.seqNo = trkSeqNo;
+                    trkSeqNo++;
      			fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
      			pWin[i]=rsp_pack;
      			if(pl>0)
@@ -181,8 +182,9 @@ int main(int argc, char *argv[])
      							rsp_pack.head.sPortNo = portno; //The server's port number
      							rsp_pack.head.dPortNo = rcv_pack.head.sPortNo; //The client's port number
      							rsp_pack.head.totalSize = f_size; //Total size of data to transmit
-     							trkSeqNo+=1;//bump up the sequence number
+     							//trkSeqNo+=1;//bump up the sequence number
      							rsp_pack.head.seqNo = trkSeqNo;
+                                        trkSeqNo+=1;
      							fread(rsp_pack.data, 1, MAX_DATA_SIZE,req_file);//sequentially read the file
      							pWin[cwnd_size-1]=rsp_pack;
      							if(pl>0) //simulating loss
