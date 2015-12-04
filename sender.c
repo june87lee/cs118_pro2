@@ -160,6 +160,7 @@ int main(int argc, char *argv[])
      			else if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &cli_addr,
      					(socklen_t*) &clilen) < 0)
      			{
+                         fprintf(stdout,"  RECEIVER SOMETHING!");
      				if(rcv_pack.head.sig == ACK) //only evaluate ACK packets
      				{
                               fprintf(stdout,"  Received ACK: %d \n", rcv_pack.head.seqNo);
