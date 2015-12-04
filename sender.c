@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
      					(socklen_t*) &clilen) > 0)
      			{
                          //fprintf(stdout,"  RECEIVER SOMETHING!");
-     				if(rcv_pack.head.sig == ACK && cv_pack.head.sig != COR) //only evaluate ACK packets
+     				if(rcv_pack.head.sig == ACK && rcv_pack.head.sig != COR) //only evaluate ACK packets
      				{
                               fprintf(stdout,"  Received ACK: %d \n", rcv_pack.head.seqNo);
      					//this will remove first element of window iff
