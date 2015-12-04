@@ -175,9 +175,9 @@ int main(int argc, char *argv[])
      			//if we received something from client, check the ack and slide window
      			//*making sure the received packet is zeroed out
      			//bzero((char *) &rcv_pack, sizeof(rcv_pack));
-                    fprintf(stdout, "  **REACHES MID**\n");
+                    //fprintf(stdout, "  **REACHES MID**\n");
      			if(recvfrom(sockfd, &rcv_pack, sizeof(rcv_pack),0,(struct sockaddr*) &serv_addr,
-     					(socklen_t*) &clilen) != 0)
+     					(socklen_t*) &clilen) > 0)
      			{
                          //fprintf(stdout,"  RECEIVER SOMETHING!");
      				if(rcv_pack.head.sig == ACK && rcv_pack.head.sig != COR) //only evaluate ACK packets
@@ -237,9 +237,9 @@ int main(int argc, char *argv[])
      					}
      				}
      			}
-                    fprintf(stdout, "  **REACHES END OF WHILE**\n");
+                    //fprintf(stdout, "  **REACHES END OF WHILE**\n");
      		}
-               fprintf(stdout, "  **!!!!OUT OF WHILE!!!**\n");
+               //fprintf(stdout, "  **!!!!OUT OF WHILE!!!**\n");
      		//if out of second loop, can assume all packets have been sent
      		//send out packet signaling to close
      		bzero((char *) &rsp_pack, sizeof(rsp_pack));
